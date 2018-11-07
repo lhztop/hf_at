@@ -32,11 +32,11 @@ namespace HaiFeng
 
             //定时启动
             //取日历判断是否应该启动->加载plat->填写前置帐号密码等参数->登录->判断登录是否成功->已加载的所有策略点"加载"->委托(与上次状态相同)
-            Plat plat = null;
+            PlatNew plat = null;
             if (args.Length > 0)
-                plat = new Plat(args[0]);
+                plat = new PlatNew(args[0]);
             else
-                plat = new Plat();
+                plat = new PlatNew();
                 //Console.WriteLine("params data service address ip:port");
             plat.Dock = DockStyle.Fill;
 

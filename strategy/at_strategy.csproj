@@ -82,6 +82,9 @@
     </ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
@@ -111,11 +114,13 @@
       <Name>at_core</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties Reactor_Enabled="0" Reactor_Commands="" Reactor_Project="" Reactor_Configuration="ALL" Reactor_Output="" Reactor_Deploy="0" />
+      <UserProperties Reactor_Deploy="0" Reactor_Output="" Reactor_Configuration="ALL" Reactor_Project="" Reactor_Commands="" Reactor_Enabled="0" />
     </VisualStudio>
   </ProjectExtensions>
   <PropertyGroup>

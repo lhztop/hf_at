@@ -87,12 +87,12 @@ namespace HaiFeng
 		/// <summary>
 		/// 当前bar索引(0开始)
 		/// </summary>
-		public int CurrentBar { get { return Math.Max(Input.Count - 1, 0); } }
+		public int CurrentBar { get { return Math.Max((Input == null ? 0 : Input.Count - 1), 0); } }
 
 		/// <summary>
 		/// 输入序列数据点数量
 		/// </summary>
-		public int Count { get { return Input.Count; } }
+		public int Count { get { return Input == null ?  0: Input.Count; } }
 
 		/// <summary>
 		/// 
