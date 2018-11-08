@@ -19,7 +19,7 @@ namespace HaiFeng
 		/// 测试
 		/// </summary>
 		/// <param name="_ws"></param>
-		public FormTest(Strategy pStra)
+		public FormTest(StrategyBase pStra)
 		{
 			InitializeComponent();
 
@@ -67,7 +67,7 @@ namespace HaiFeng
 
 		private DataTable dtOperation = new DataTable("交易记录");
 		//private DataGridViewRow ws = null;
-		private Strategy _stra = null;
+		private StrategyBase _stra = null;
 		List<double> equity = new List<double>();
 
 		/// <summary>

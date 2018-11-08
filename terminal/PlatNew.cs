@@ -35,6 +35,7 @@ namespace HaiFeng
 
         {
             InitializeComponent();
+            this.dateTimePickerBegin.Value = DateTime.Today.AddDays(-10);
             this.buttonLogin.Click += ButtonLogin_Click;
             this.buttonOffline.Click += Offline_Click;
             ReadServerConfig();
@@ -65,7 +66,7 @@ namespace HaiFeng
             base.OnHandleDestroyed(e);
         }
 
-        private ConcurrentDictionary<string, Strategy> _dicStrategies = new ConcurrentDictionary<string, Strategy>();
+        private ConcurrentDictionary<string, StrategyBase> _dicStrategies = new ConcurrentDictionary<string, StrategyBase>();
 
         private string[] fs;
 
@@ -214,7 +215,7 @@ namespace HaiFeng
 
             DataGridViewRow row = this.DataGridViewStrategies.SelectedRows[0];
             string name = (string)row.Cells["StraName"].Value;
-            Strategy stra;
+            StrategyBase stra;
             _dicStrategies.TryGetValue(name, out stra);
             if (stra != null)
             {
@@ -346,7 +347,10 @@ namespace HaiFeng
                 var list = JsonConvert.DeserializeObject<List<StrategyConfigNew>>(File.ReadAllText("strategies.cfg"));
                 foreach (StrategyConfigNew stra in list)
                 {
-                    
+                    if (stra.Datas == null || stra.Datas.Count <= 0)
+                    {
+                        continue;
+                    }
                     Type straType = null;
                     foreach (Type t in this.ComboBoxType.Items)
                     {
@@ -363,7 +367,21 @@ namespace HaiFeng
 
                     Strategy strategy = (Strategy)Activator.CreateInstance(straType);
                     strategy.Name = stra.Name;
-                    int rid = AddStra(strategy, stra.Name, stra.Datas[0].Instrument, stra.Datas[0].InstrumentOrder, this.toIntervalString(stra.Datas[0].Interval, stra.Datas[0].IntervalType), this.dateTimePickerBegin.Value.Date, DateTime.MaxValue);
+                    List<Data> datas = new List<Data>();
+                    foreach(DataConfig dc in stra.Datas)
+                    {
+                        Data data = new Data
+                        {
+                            Instrument = dc.Instrument,
+                            InstrumentOrder = dc.InstrumentOrder,
+                            Interval = dc.Interval,
+                            IntervalType = dc.IntervalType,
+                            InstrumentInfo = dc.InstrumentInfo,
+                        };
+                        datas.Add(data);
+                    }
+                    strategy.Init(datas.ToArray());
+                    int rid = AddStra(strategy, stra.Name, stra.Datas[0].Instrument, stra.Datas[0].InstrumentOrder, this.toIntervalString(stra.Datas[0].Interval, stra.Datas[0].IntervalType), this.dateTimePickerBegin.Value.Date, DateTime.MaxValue, datas);
 
                     LogInfo($"{stra.Name,8},读取策略 {(rid == -1 ? "出错" : "完成")}");
                 }
@@ -393,7 +411,7 @@ namespace HaiFeng
 
             DataGridViewRow row = this.DataGridViewStrategies.Rows[e.RowIndex];
             string name = (string)row.Cells["StraName"].Value;
-            Strategy stra;
+            StrategyBase stra;
             if (_dicStrategies.TryGetValue(name, out stra))
             {
                 var head = row.Cells[e.ColumnIndex].OwningColumn.Name;
@@ -448,7 +466,7 @@ namespace HaiFeng
         }
 
         // 策略添加到表中,返回添加后的行号
-        private int AddStra(Strategy stra, string pName, string pInstrument, string pInstrumentOrder, string pInterval, DateTime pBegin, DateTime? pEnd)
+        private int AddStra(StrategyBase stra, string pName, string pInstrument, string pInstrumentOrder, string pInterval, DateTime pBegin, DateTime pEnd, List<Data> datas=null)
         {
             if (!_dicStrategies.TryAdd(pName, stra))
             {
@@ -460,24 +478,20 @@ namespace HaiFeng
 
             this.DataGridViewStrategies.Rows[rid].Cells["Order"].Value = false;
             this.DataGridViewStrategies.Rows[rid].Cells["EndDate"].Value = null;
-
+            List<Data> list = datas;
+            if (datas == null || datas.Count <= 0)
+            {
+                list = new List<Data>();
+                list.Add(this.toData(pInstrument, pInstrumentOrder, pInterval, pBegin.ToString("yyyyMMdd"), pEnd.ToString("yyyyMMdd")));
+            }
+            stra.Init(list.ToArray<Data>());
             if (!_offline)
                 stra.OnRtnOrder += stra_OnRtnOrder;
             return rid;
         }
 
-        //tick加载
-        private void LoadDataTick(int rid)
+        private Data toData(String inst, String instOrder, String interval, String begin, String end)
         {
-            DataGridViewRow row = this.DataGridViewStrategies.Rows[rid];
-
-            var inst = row.Cells["Instrument"].Value.ToString();
-            var instOrder = row.Cells["InstrumentOrder"].Value.ToString();
-            var interval = row.Cells["Interval"].Value.ToString();
-            var stra = _dicStrategies[row.Cells["StraName"].Value.ToString()];
-            var begin = ((DateTime)row.Cells["BeginDate"].Value).ToString("yyyyMMdd");
-            var end = row.Cells["EndDate"].Value == null ? DateTime.Today.ToString("yyyyMMdd") : ((DateTime)row.Cells["EndDate"].Value).ToString("yyyyMMdd");
-
             Data data = new Data
             {
                 Interval = int.Parse(interval.Split(' ')[1]),
@@ -491,7 +505,7 @@ namespace HaiFeng
             if (!_dataProcess.InstrumentInfo.TryGetValue(inst, out instInfo) || !_dataProcess.ProductInfo.TryGetValue(instInfo.ProductID, out procInfo))
             {
                 LogError("无合约对应的品种信息");
-                return;
+                return null;
             }
             data.InstrumentInfo = new InstrumentInfo
             {
@@ -500,24 +514,39 @@ namespace HaiFeng
                 PriceTick = procInfo.PriceTick,
                 VolumeMultiple = procInfo.VolumeTuple,
             };
+            return data;
+        }
+
+        //tick加载
+        private void LoadDataTick(int rid)
+        {
+            DataGridViewRow row = this.DataGridViewStrategies.Rows[rid];
+            var strategyName = (string)row.Cells["StraName"].Value;
+            var begin = ((DateTime)row.Cells["BeginDate"].Value).ToString("yyyyMMdd");
+            var end = row.Cells["EndDate"].Value == null ? DateTime.Today.ToString("yyyyMMdd") : ((DateTime)row.Cells["EndDate"].Value).ToString("yyyyMMdd");
+
+            
             this.DataGridViewStrategies.EndEdit();
             this.DataGridViewStrategies.Refresh();
 
             new Thread(() =>
             {
                 row.Cells["TickLoad"].Value = "加载中...";
-
-                //=>初始化策略/回测
-                stra.Init(data);
+                StrategyBase stra = this._dicStrategies[strategyName];
                 stra.EnableTick = true; //允许接收tick数据
                 List<string> insts = new List<string>();    //需要处理的合约
-                if (data.Instrument.EndsWith("000"))
+                foreach (Data data in stra.Datas)
                 {
-                    //_dicTick000[data.Instrument] = new Tick { InstrumentID = data.Instrument };//对于xx000需要先有数据保存
-                    insts.AddRange(_dataProcess.InstrumentInfo.Where(n => n.Value.ProductID == _dataProcess.InstrumentInfo[data.Instrument].ProductID).Select(n => n.Key).ToArray());
+                    if (data.Instrument.EndsWith("000"))
+                    {
+                        //_dicTick000[data.Instrument] = new Tick { InstrumentID = data.Instrument };//对于xx000需要先有数据保存
+                        insts.AddRange(_dataProcess.InstrumentInfo.Where(n => n.Value.ProductID == _dataProcess.InstrumentInfo[data.Instrument].ProductID).Select(n => n.Key).ToArray());
+                    }
+                    else
+                    {
+                        insts.Add(data.Instrument);
+                    }    
                 }
-                else
-                    insts.Add(data.Instrument);
 
                 foreach (var day in new DirectoryInfo("Y:\\_tick").GetFiles("*.csv").Select(n => n.Name.Replace(n.Extension, "")).OrderBy(n => n))
                 {
@@ -568,94 +597,72 @@ namespace HaiFeng
         private void LoadDataBar(int rid)
         {
             DataGridViewRow row = this.DataGridViewStrategies.Rows[rid];
-
-            var inst = row.Cells["Instrument"].Value.ToString();
-            var instOrder = row.Cells["InstrumentOrder"].Value.ToString();
-            var interval = row.Cells["Interval"].Value.ToString();
-            var stra = _dicStrategies[row.Cells["StraName"].Value.ToString()];
+            var strategyName = (string)row.Cells["StraName"].Value;
             var begin = ((DateTime)row.Cells["BeginDate"].Value).ToString("yyyyMMdd");
             var end = row.Cells["EndDate"].Value == null ? DateTime.Today.AddDays(7).ToString("yyyyMMdd") : ((DateTime)row.Cells["EndDate"].Value).AddDays(1).ToString("yyyyMMdd");
 
             this.DataGridViewStrategies.Rows[rid].Cells["Loaded"].Value = "加载中...";
 
-            Data data = new Data
-            {
-                Interval = interval.Split(' ').Length == 1 ? 1 : int.Parse(interval.Split(' ')[1]),
-                IntervalType = (EnumIntervalType)Enum.Parse(typeof(EnumIntervalType), interval.Split(' ')[0]),
-                Instrument = inst,
-                InstrumentOrder = instOrder,
-            };
-
-            //需处理成按合约取品种(期权规则与期货不同)
-            Instrument instInfo;
-            Product procInfo;
-            if (!_dataProcess.InstrumentInfo.TryGetValue(inst, out instInfo) || !_dataProcess.ProductInfo.TryGetValue(instInfo.ProductID, out procInfo))
-            {
-                LogError("无合约对应的品种信息");
-                return;
-            }
-            data.InstrumentInfo = new InstrumentInfo
-            {
-                InstrumentID = inst,
-                ProductID = instInfo.ProductID,
-                PriceTick = procInfo.PriceTick,
-                VolumeMultiple = procInfo.VolumeTuple,
-            };
-
             this.DataGridViewStrategies.EndEdit();
             this.DataGridViewStrategies.Refresh();
-
-            List<Bar> bars = null;
-            if (data.IntervalType != EnumIntervalType.Sec)// == EnumIntervalType.Min || data.IntervalType == EnumIntervalType.Hour)
+            StrategyBase stra = this._dicStrategies[strategyName];
+            Tuple<Data, List<Bar>>[] historyData = new Tuple<Data, List<Bar>>[stra.Datas.Count];
+            for(int i=0; i<stra.Datas.Count; i++)
             {
-                if (data.IntervalType >= EnumIntervalType.Day)//取日线数据
-                    bars = _dataProcess.QueryDay(inst, begin, end).Select(n => new Bar
-                    {
-                        D = DateTime.ParseExact(n._id, "yyyyMMdd", null),
-                        O = n.Open,
-                        H = n.High,
-                        L = n.Low,
-                        C = n.Close,
-                        V = n.Volume,
-                        I = n.OpenInterest,
-                        TradingDay = int.Parse(n._id)
-                    }).ToList();
-                else
-                    bars = _dataProcess.QueryMin(inst, begin, end).Select(n => new Bar
-                    {
-                        D = DateTime.ParseExact(n._id, "yyyyMMdd HH:mm:ss", null),
-                        TradingDay = int.Parse(n.TradingDay),
-                        O = n.Open,
-                        H = n.High,
-                        L = n.Low,
-                        C = n.Close,
-                        V = n.Volume,
-                        I = n.OpenInterest,
-                    }).ToList();
-
-                // 取当日数据
-                if (row.Cells["EndDate"].Value == null)
+                Data data = stra.Datas[i];
+                List<Bar> bars = null;
+                string inst = data.Instrument;
+                if (data.IntervalType != EnumIntervalType.Sec)// == EnumIntervalType.Min || data.IntervalType == EnumIntervalType.Hour)
                 {
-                    var listReal = _dataProcess.QueryReal(inst);
-                    bars = (bars ?? new List<Bar>());
-                    if (listReal != null)
-                        bars.AddRange(listReal.Select(n => new Bar
+                    if (data.IntervalType >= EnumIntervalType.Day)//取日线数据
+                        bars = _dataProcess.QueryDay(inst, begin, end).Select(n => new Bar
                         {
-                            D = DateTime.ParseExact(n._id, "yyyyMMdd HH:mm:ss", null),
+                            D = DateTime.ParseExact(n._id, "yyyyMMdd", null),
+                            O = n.Open,
+                            H = n.High,
+                            L = n.Low,
+                            C = n.Close,
+                            V = n.Volume,
+                            I = n.OpenInterest,
+                            TradingDay = int.Parse(n._id)
+                        }).ToList();
+                    else
+                        bars = _dataProcess.QueryMin(inst, begin, end).Select(n => new Bar
+                        {
+                            D = DateTime.ParseExact(n._id, "yyyy-MM-dd HH:mm:ss", null),
                             TradingDay = int.Parse(n.TradingDay),
                             O = n.Open,
                             H = n.High,
                             L = n.Low,
                             C = n.Close,
                             V = n.Volume,
-                            I = n.OpenInterest
-                        }).ToList());
+                            I = n.OpenInterest,
+                        }).ToList();
+
+                    // 取当日数据
+                    if (row.Cells["EndDate"].Value == null)
+                    {
+                        var listReal = _dataProcess.QueryReal(inst);
+                        bars = (bars ?? new List<Bar>());
+                        if (listReal != null)
+                            bars.AddRange(listReal.Select(n => new Bar
+                            {
+                                D = DateTime.ParseExact(n._id, "yyyy-MM-dd HH:mm:ss", null),
+                                TradingDay = int.Parse(n.TradingDay),
+                                O = n.Open,
+                                H = n.High,
+                                L = n.Low,
+                                C = n.Close,
+                                V = n.Volume,
+                                I = n.OpenInterest
+                            }).ToList());
+                    }
                 }
+                historyData[i] = Tuple.Create(data, bars);
             }
 
             //=>初始化策略/回测
-            stra.Init(data);
-            stra.LoadHistory(Tuple.Create(data, bars));
+            stra.LoadHistory(historyData);
 
             //未设置结束日期=>可订阅并接收行情
             if (row.Cells["EndDate"].Value == null && _q != null)
@@ -758,7 +765,7 @@ namespace HaiFeng
                     //更新时间与交易所状态
                     foreach (DataGridViewRow row in this.DataGridViewStrategies.Rows)
                     {
-                        Strategy stra;
+                        StrategyBase stra;
                         if (_dicStrategies.TryGetValue((string)row.Cells["StraName"].Value, out stra))
                         {
                             if (stra.Datas.Count > 0)
@@ -779,7 +786,7 @@ namespace HaiFeng
         }
 
         //策略委托:
-        void stra_OnRtnOrder(OrderItem pOrderItem, Data pData, Strategy pStrategy)
+        void stra_OnRtnOrder(OrderItem pOrderItem, Data pData, StrategyBase pStrategy)
         {
             //实际委托
             if (pStrategy.EnableOrder)

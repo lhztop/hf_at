@@ -21,7 +21,7 @@ namespace HaiFeng
 		/// 工作区窗口
 		/// </summary>
 		/// <param name="pWorkSetting"></param>
-		public FormWorkSpace(Strategy pStra)
+		public FormWorkSpace(StrategyBase pStra)
 		{
 			InitializeComponent();
 			_stra = pStra;
@@ -29,7 +29,7 @@ namespace HaiFeng
 
 
 		readonly List<OrderItem> _listOperateArrow = new List<OrderItem>();
-		private readonly Strategy _stra;
+		private readonly StrategyBase _stra;
 
 		#region 变量
 		//最大显示K线数

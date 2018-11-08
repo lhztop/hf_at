@@ -701,7 +701,7 @@ namespace HaiFeng
         }
 
         //策略委托:
-        void stra_OnRtnOrder(OrderItem pOrderItem, Data pData, Strategy pStrategy)
+        void stra_OnRtnOrder(OrderItem pOrderItem, Data pData, StrategyBase pStrategy)
         {
             //实际委托
             if (pStrategy.EnableOrder)

@@ -49,7 +49,11 @@ namespace HaiFeng
 			get
 			{
 				double rtn = double.NaN;
-				if (Count - 1 - index >= 0)
+                if (index < 0)
+                {
+                    index = Count + index;
+                }
+				if (Count - 1 - index >= 0 && Count > 0)
 				{
 					rtn = base[Count - 1 - index];
 				}
@@ -57,7 +61,11 @@ namespace HaiFeng
 			}
 			set
 			{
-				if (Count - 1 - index < 0)
+                if (index < 0)
+                {
+                    index = Count + index;
+                }
+                if (Count - 1 - index < 0)
 				{
 					return;
 				}
