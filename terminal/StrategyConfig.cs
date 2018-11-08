@@ -22,6 +22,7 @@ namespace HaiFeng
         public string Name { get; set; }
         public string TypeFullName { get; set; }
         public List<DataConfig> Datas { get; set; }
+        public bool EnableTick { get; set; } = true;
         public string Params { get; set; }
     }
 

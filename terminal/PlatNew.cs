@@ -273,6 +273,10 @@ namespace HaiFeng
 
         void SaveStrategy()
         {
+            if (this._dicStrategies.Count <= 0)
+            {
+                return;
+            }
             List<StrategyConfigNew> list = new List<StrategyConfigNew>();
             foreach(Strategy stra in this._dicStrategies.Values)
             {
@@ -381,6 +385,10 @@ namespace HaiFeng
                         datas.Add(data);
                     }
                     strategy.Init(datas.ToArray());
+                    if (stra.EnableTick)
+                    {
+                        strategy.EnableTick = true;
+                    }
                     int rid = AddStra(strategy, stra.Name, stra.Datas[0].Instrument, stra.Datas[0].InstrumentOrder, this.toIntervalString(stra.Datas[0].Interval, stra.Datas[0].IntervalType), this.dateTimePickerBegin.Value.Date, DateTime.MaxValue, datas);
 
                     LogInfo($"{stra.Name,8},读取策略 {(rid == -1 ? "出错" : "完成")}");
@@ -1113,9 +1121,9 @@ namespace HaiFeng
         bool Make000Double(Tick tick, out Tick tick000)
         {
             var proc = _dataProcess.InstrumentInfo[tick.InstrumentID].ProductID;
-            tick000 = _dicTick000.GetOrAdd(_dataProcess.InstrumentInfo[tick.InstrumentID].ProductID + "000", new Tick
+            tick000 = _dicTick000.GetOrAdd(_dataProcess.InstrumentInfo[tick.InstrumentID].ProductID + "_000", new Tick
             {
-                InstrumentID = proc + "000",
+                InstrumentID = proc + "_000",
                 UpdateTime = tick.UpdateTime,
                 UpdateMillisec = tick.UpdateMillisec,
             });
