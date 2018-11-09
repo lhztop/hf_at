@@ -97,7 +97,7 @@ namespace HaiFeng
 		}
 	}
 
-	public partial class Strategy
+	public partial class StrategyBase
 	{
 		public RIND RIND(int periodQ, int smooth)
 		{

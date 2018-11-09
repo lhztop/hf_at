@@ -68,7 +68,7 @@ namespace HaiFeng
 		}
 	}
 
-	public partial class Strategy
+	public partial class StrategyBase
 	{
 		public RSS RSS(DataSeries input, int eMA1, int eMA2, int length)
 		{

@@ -112,7 +112,7 @@ namespace HaiFeng
 			return CacheIndicator<ADX>(new ADX() { Period = period, High = high, Low = low, Input = close }, ref cacheADX);
 		}
 	}
-	public partial class Strategy
+	public partial class StrategyBase
 	{
 		public ADX ADX(int period)
 		{

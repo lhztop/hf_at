@@ -87,7 +87,7 @@ namespace HaiFeng
 		}
 	}
 
-	public partial class Strategy
+	public partial class StrategyBase
 	{
 		public TSI TSI(DataSeries input, int fast, int slow)
 		{

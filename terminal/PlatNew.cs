@@ -278,7 +278,7 @@ namespace HaiFeng
                 return;
             }
             List<StrategyConfigNew> list = new List<StrategyConfigNew>();
-            foreach(Strategy stra in this._dicStrategies.Values)
+            foreach(StrategyBase stra in this._dicStrategies.Values)
             {
                 StrategyConfigNew strategy = new StrategyConfigNew();
                 strategy.Name = stra.Name;
@@ -369,7 +369,7 @@ namespace HaiFeng
                         continue;
                     }
 
-                    Strategy strategy = (Strategy)Activator.CreateInstance(straType);
+                    StrategyBase strategy = (StrategyBase)Activator.CreateInstance(straType);
                     strategy.Name = stra.Name;
                     List<Data> datas = new List<Data>();
                     foreach(DataConfig dc in stra.Datas)
@@ -384,13 +384,12 @@ namespace HaiFeng
                         };
                         datas.Add(data);
                     }
-                    strategy.Init(datas.ToArray());
                     if (stra.EnableTick)
                     {
                         strategy.EnableTick = true;
                     }
                     int rid = AddStra(strategy, stra.Name, stra.Datas[0].Instrument, stra.Datas[0].InstrumentOrder, this.toIntervalString(stra.Datas[0].Interval, stra.Datas[0].IntervalType), this.dateTimePickerBegin.Value.Date, DateTime.MaxValue, datas);
-
+                    LoadDataBar(rid);
                     LogInfo($"{stra.Name,8},读取策略 {(rid == -1 ? "出错" : "完成")}");
                 }
             }
@@ -827,7 +826,7 @@ namespace HaiFeng
                 //加载hf_plat报错:增加对hf_plat_core的引用
                 foreach (var t in ass.GetTypes())
                 {
-                    if (t.BaseType == typeof(Strategy))
+                    if (t.IsSubclassOf(typeof(StrategyBase)))
                         this.ComboBoxType.Items.Add(t);
                 }
             }

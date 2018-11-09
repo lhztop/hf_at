@@ -102,7 +102,7 @@ namespace HaiFeng
 			return CacheIndicator<Bollinger>(new Bollinger() { NumStdDev = numStdDev, Period = period, Input = input }, ref cacheBollinger);
 		}
 	}
-	public partial class Strategy
+	public partial class StrategyBase
 	{
 		/// <summary>
 		/// 

@@ -93,7 +93,7 @@ namespace HaiFeng
 		}
 	}
 
-	public partial class Strategy
+	public partial class StrategyBase
 	{
 		public ChaikinOscillator ChaikinOscillator(int fast, int slow)
 		{

@@ -58,7 +58,7 @@ namespace HaiFeng
 		}
 	}
 
-	public partial class Strategy
+	public partial class StrategyBase
 	{
 		public HMA HMA(DataSeries input, int period)
 		{

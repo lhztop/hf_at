@@ -75,7 +75,7 @@ namespace HaiFeng
 		}
 	}
 
-	public partial class Strategy
+	public partial class StrategyBase
 	{
 
 		public PPO PPO(DataSeries input, int fast, int slow, int smooth)

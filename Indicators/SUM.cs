@@ -44,7 +44,7 @@ namespace HaiFeng
 		}
 	}
 
-	public partial class Strategy
+	public partial class StrategyBase
 	{
 		public SUM SUM(DataSeries input, int period)
 		{

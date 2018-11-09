@@ -47,7 +47,7 @@ namespace HaiFeng
 		}
 	}
 
-	public partial class Strategy
+	public partial class StrategyBase
 	{
 		public ROC ROC(DataSeries input, int period)
 		{

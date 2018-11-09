@@ -78,7 +78,7 @@ namespace HaiFeng
 			return CacheIndicator<StdDev>(new StdDev() { Period = period, Input = input }, ref cacheStdDev);
 		}
 	}
-	public partial class Strategy
+	public partial class StrategyBase
 	{
 		/// <summary>
 		/// 

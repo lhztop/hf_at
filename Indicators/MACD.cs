@@ -139,7 +139,7 @@ namespace HaiFeng
 			return CacheIndicator(new MACD() { Fast = fast, Slow = slow, Smooth = smooth, Input = input }, ref cacheMACD);
 		}
 	}
-	public partial class Strategy
+	public partial class StrategyBase
 	{
 		/// <summary>
 		/// 

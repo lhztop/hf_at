@@ -126,7 +126,7 @@ namespace HaiFeng
 			return CacheIndicator<Aroon>(new Aroon() { Period = period, High = high, Low = low, Input = close }, ref cacheAroon);
 		}
 	}
-	public partial class Strategy
+	public partial class StrategyBase
 	{
 		public Aroon Aroon(int period)
 		{

@@ -92,7 +92,7 @@ namespace HaiFeng
 		}
 	}
 
-	public partial class Strategy
+	public partial class StrategyBase
 	{
 		public StochasticsFast StochasticsFast(int periodD, int periodK)
 		{

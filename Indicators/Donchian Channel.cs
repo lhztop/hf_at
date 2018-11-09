@@ -69,7 +69,7 @@ namespace HaiFeng
 		}
 	}
 
-	public partial class Strategy
+	public partial class StrategyBase
 	{
 		public DonchianChannel DonchianChannel(int period)
 		{

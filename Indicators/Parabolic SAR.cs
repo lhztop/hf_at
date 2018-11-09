@@ -226,7 +226,7 @@ namespace HaiFeng
 		}
 	}
 
-	public partial class Strategy
+	public partial class StrategyBase
 	{
 		public ParabolicSAR ParabolicSAR(double acceleration, double accelerationMax, double accelerationStep)
 		{

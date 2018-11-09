@@ -76,7 +76,7 @@ namespace HaiFeng
 		}
 	}
 
-	public partial class Strategy
+	public partial class StrategyBase
 	{
 
 		public RSquared RSquared(DataSeries input, int period)

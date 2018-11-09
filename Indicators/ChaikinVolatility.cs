@@ -70,7 +70,7 @@ namespace HaiFeng
 		}
 	}
 
-	public partial class Strategy
+	public partial class StrategyBase
 	{
 		public ChaikinVolatility ChaikinVolatility(int mAPeriod, int rOCPeriod)
 		{

@@ -74,7 +74,7 @@ namespace HaiFeng
 		}
 	}
 
-	public partial class Strategy
+	public partial class StrategyBase
 	{
 		public EaseOfMovement EaseOfMovement(int smoothing, int volumeDivisor)
 		{

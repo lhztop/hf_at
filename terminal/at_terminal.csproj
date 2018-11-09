@@ -111,6 +111,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="A_.cs" />
+    <Compile Include="A_Stra.cs" />
     <Compile Include="FormParams.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -151,10 +153,6 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <Compile Include="A_Stra.cs" />
-    <Compile Include="A_.cs">
-      <SubType>Code</SubType>
     </Compile>
     <Compile Include="QuoteExt.cs" />
     <Compile Include="Seven24Config.cs" />
@@ -216,7 +214,7 @@ copy $(ProjectDir)..\Resources\dll $(TargetDir)dll</PostBuildEvent>
   </PropertyGroup>
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties Reactor_Enabled="0" Reactor_Commands="" Reactor_Project="D:\haifeng_project\hf_plat_tb\hf_plat_core\hf_plat_core.nrproj" Reactor_Configuration="ALL" Reactor_Output="&lt;AssemblyLocation&gt;\..\..\hf_plat_terminal\debug\&lt;AssemblyFileName&gt;" Reactor_Deploy="0" />
+      <UserProperties Reactor_Deploy="0" Reactor_Output="&lt;AssemblyLocation&gt;\..\..\hf_plat_terminal\debug\&lt;AssemblyFileName&gt;" Reactor_Configuration="ALL" Reactor_Project="D:\haifeng_project\hf_plat_tb\hf_plat_core\hf_plat_core.nrproj" Reactor_Commands="" Reactor_Enabled="0" />
     </VisualStudio>
   </ProjectExtensions>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

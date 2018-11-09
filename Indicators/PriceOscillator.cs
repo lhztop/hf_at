@@ -64,7 +64,7 @@ namespace HaiFeng
 		}
 	}
 
-	public partial class Strategy
+	public partial class StrategyBase
 	{
 		public PriceOscillator PriceOscillator(DataSeries input, int fast, int slow, int smooth)
 		{

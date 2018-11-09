@@ -70,7 +70,7 @@ namespace HaiFeng
 			return CacheIndicator<ADL>(new ADL { High = high, Low = low, Volume = volume, Input = close }, ref cacheADL);
 		}
 	}
-	public partial class Strategy
+	public partial class StrategyBase
 	{
 		public ADL ADL()
 		{

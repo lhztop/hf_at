@@ -61,7 +61,7 @@ namespace HaiFeng
 		}
 	}
 
-	public partial class Strategy
+	public partial class StrategyBase
 	{
 		public VWMA VWMA(DataSeries input, int period)
 		{

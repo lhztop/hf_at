@@ -120,7 +120,7 @@ namespace HaiFeng
 		}
 	}
 
-	public partial class Strategy
+	public partial class StrategyBase
 	{
 		public RegressionChannel RegressionChannel(DataSeries input, int period, double width)
 		{

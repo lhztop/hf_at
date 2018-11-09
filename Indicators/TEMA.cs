@@ -53,7 +53,7 @@ namespace HaiFeng
 		}
 	}
 
-	public partial class Strategy
+	public partial class StrategyBase
 	{
 		public TEMA TEMA(DataSeries input, int period)
 		{

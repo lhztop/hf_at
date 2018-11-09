@@ -76,7 +76,7 @@ namespace HaiFeng
 	}
 	#endregion
 
-	public partial class Strategy
+	public partial class StrategyBase
 	{
 		public MFI MFI(int period)
 		{

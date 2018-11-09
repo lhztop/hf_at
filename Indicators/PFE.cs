@@ -75,7 +75,7 @@ namespace HaiFeng
 		}
 	}
 
-	public partial class Strategy
+	public partial class StrategyBase
 	{
 
 		public PFE PFE(DataSeries input, int period, int smooth)

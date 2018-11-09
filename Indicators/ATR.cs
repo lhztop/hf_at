@@ -77,7 +77,7 @@ namespace HaiFeng
 			return CacheIndicator<ATR>(new ATR() { Period = period, High = high, Low = low, Input = close }, ref cacheATR);
 		}
 	}
-	public partial class Strategy
+	public partial class StrategyBase
 	{
 		public ATR ATR(int period)
 		{

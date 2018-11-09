@@ -120,7 +120,7 @@ namespace HaiFeng
 		}
 	}
 
-	public partial class Strategy
+	public partial class StrategyBase
 	{
 		public RSI RSI(DataSeries input, int period, int smooth)
 		{

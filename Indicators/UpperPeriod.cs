@@ -149,7 +149,7 @@ namespace HaiFeng
 	}
 	#endregion
 
-	public partial class Strategy
+	public partial class StrategyBase
 	{
 		public UpperPeriod UpperPeriod(int inteval, EnumIntervalType type)
 		{

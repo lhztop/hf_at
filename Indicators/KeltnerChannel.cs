@@ -98,7 +98,7 @@ namespace HaiFeng
 		}
 	}
 
-	public partial class Strategy
+	public partial class StrategyBase
 	{
 		public KeltnerChannel KeltnerChannel(double offsetMultiplier, int period)
 		{

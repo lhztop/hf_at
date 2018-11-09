@@ -60,7 +60,7 @@ namespace HaiFeng
 		}
 	}
 
-	public partial class Strategy
+	public partial class StrategyBase
 	{
 		public ADXR ADXR(int interval, int period)
 		{

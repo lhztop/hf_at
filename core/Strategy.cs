@@ -61,6 +61,11 @@ namespace HaiFeng
         }
 
         /// <summary>
+		/// 
+		/// </summary>
+		public Indicator Indicator { get; } = new Indicator();
+
+        /// <summary>
 		/// StrategyCollection.Add时调用：初始化及测试
 		/// </summary>
 		/// <param name="pDatas">数据</param>
@@ -334,12 +339,6 @@ namespace HaiFeng
 		{
 		}
 
-		/// <summary>
-		/// 
-		/// </summary>
-		public Indicator Indicator { get; } = new Indicator();
-
-
 		#region 策略状态:对data[0]的引用
 
 		/// <summary>
@@ -610,18 +609,35 @@ namespace HaiFeng
                     if (!string.IsNullOrEmpty(instrument))
                     {
                         this.instrumentMap.Add(instrument, list);
-                        list = new List<Data>();
-                    }  
+                        if (this.instrumentMap.ContainsKey(data.Instrument))
+                        {
+                            list = this.instrumentMap[data.Instrument];
+                        }
+                        else
+                        {
+                            list = new List<Data>();
+                        }
+                    }
+                    instrument = data.Instrument;
                 }
-                instrument = data.Instrument;
+                
                 list.Add(data);
             }
             if (list.Count > 0)
             {
                 this.instrumentMap.Add(instrument, list);
             }
+            this.InitializeMultiAfter();
         }
 
+        public abstract void InitializeMultiAfter();
+
+        /// <summary>
+		/// 平多仓：卖平
+		/// </summary>
+		/// <param name="pLots"> 手数 </param>
+		/// <param name="pPrice"> 价格  (非PriceTick整数倍会报错,请先行处理.)</param>
+		/// <param name="pRemark">注释</param>
         public virtual void Sell(string instrument, double pLots, double pPrice, string pRemark = "")
         {
             if (this.instrumentMap.ContainsKey(instrument))
@@ -633,6 +649,12 @@ namespace HaiFeng
             }
         }
 
+        /// <summary>
+		/// 开空仓：卖开
+		/// </summary>
+		/// <param name="pLots"> 手数 </param>
+		/// <param name="pPrice"> 价格  (非PriceTick整数倍会报错,请先行处理.)</param>
+		/// <param name="pRemark">注释</param>
         public virtual void SellShort(string instrument, double pLots, double pPrice, string pRemark = "")
         {
             if (this.instrumentMap.ContainsKey(instrument))
@@ -645,6 +667,12 @@ namespace HaiFeng
             }
         }
 
+        /// <summary>
+		/// 开多仓：买开
+		/// </summary>
+		/// <param name="pLots"> 手数 </param>
+		/// <param name="pPrice"> 价格 (非PriceTick整数倍会报错,请先行处理.)</param>
+		/// <param name="pRemark">注释</param>
         public virtual void Buy(string instrument, double pLots, double pPrice, string pRemark = "")
         {
             if (this.instrumentMap.ContainsKey(instrument))
@@ -657,6 +685,12 @@ namespace HaiFeng
             }
         }
 
+        /// <summary>
+		/// 平空仓：买平
+		/// </summary>
+		/// <param name="pLots"> 手数 </param>
+		/// <param name="pPrice"> 价格  (非PriceTick整数倍会报错,请先行处理.)</param>
+		/// <param name="pRemark">注释</param>
         public virtual void BuyToCover(string instrument, double pLots, double pPrice, string pRemark = "")
         {
             if (this.instrumentMap.ContainsKey(instrument))

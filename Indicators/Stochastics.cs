@@ -101,7 +101,7 @@ namespace HaiFeng
 		}
 	}
 
-	public partial class Strategy
+	public partial class StrategyBase
 	{
 		public Stochastics Stochastics(int periodD, int periodK, int smooth)
 		{
