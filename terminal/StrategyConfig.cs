@@ -23,6 +23,7 @@ namespace HaiFeng
         public string TypeFullName { get; set; }
         public List<DataConfig> Datas { get; set; }
         public bool EnableTick { get; set; } = true;
+        public DateTime BeginDate { get; set; }
         public string Params { get; set; }
     }
 

@@ -35,7 +35,7 @@ namespace HaiFeng
 
         {
             InitializeComponent();
-            this.dateTimePickerBegin.Value = DateTime.Today.AddDays(-10);
+            this.dateTimePickerBegin.Value = DateTime.Today.AddDays(-20);
             this.buttonLogin.Click += ButtonLogin_Click;
             this.buttonOffline.Click += Offline_Click;
             ReadServerConfig();
@@ -284,6 +284,7 @@ namespace HaiFeng
                 strategy.Name = stra.Name;
                 strategy.TypeFullName = stra.GetType().FullName;
                 strategy.Datas = new List<DataConfig>();
+                strategy.BeginDate = (DateTime)this.DataGridViewStrategies.Rows[int.Parse(stra.Name) - 1].Cells["BeginDate"].Value;
                 foreach(Data dataold in stra.Datas)
                 {
                     DataConfig data = new DataConfig
@@ -388,7 +389,7 @@ namespace HaiFeng
                     {
                         strategy.EnableTick = true;
                     }
-                    int rid = AddStra(strategy, stra.Name, stra.Datas[0].Instrument, stra.Datas[0].InstrumentOrder, this.toIntervalString(stra.Datas[0].Interval, stra.Datas[0].IntervalType), this.dateTimePickerBegin.Value.Date, DateTime.MaxValue, datas);
+                    int rid = AddStra(strategy, stra.Name, stra.Datas[0].Instrument, stra.Datas[0].InstrumentOrder, this.toIntervalString(stra.Datas[0].Interval, stra.Datas[0].IntervalType), stra.BeginDate == DateTime.MinValue ? this.dateTimePickerBegin.Value.Date : stra.BeginDate, DateTime.MaxValue, datas);
                     LoadDataBar(rid);
                     LogInfo($"{stra.Name,8},读取策略 {(rid == -1 ? "出错" : "完成")}");
                 }
